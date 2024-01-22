@@ -7,6 +7,7 @@ const Docs = ({ userCity, allDocs }) => {
         //const values = Object.values(availableDocs);
         const filterData = allDocs.filter(data => data.location.toLowerCase() === userCity.toLowerCase());
         setCityData(filterData);
+        //console.log(userCity);
     },[userCity, allDocs]);
 
 
