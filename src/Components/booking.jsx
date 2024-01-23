@@ -42,6 +42,7 @@ const BookingForm = () => {
       // If city param is present in the URL -> update the formData
       setCity(urlCity);
       isSetSubmit(true);
+      window.scrollTo({ top: document.getElementById('docsSection').offsetTop, behavior: 'smooth' });
     }
   }, [location.search]);
 
@@ -53,6 +54,7 @@ const BookingForm = () => {
       // If manually reloaded, redirect to the default path
       history('');
       isSetSubmit(false);
+      window.scrollTo({ top: 0 , behavior: 'smooth' });
     }
   }, [history]);
 
@@ -152,7 +154,9 @@ const BookingForm = () => {
           <button type='reset' onClick={handleReset} className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-full ">Reset</button>
         </div>
       </form>
-      { isSubmit && <Docs userCity={city} allDocs={availableDoctors}/> }
+      <div id='docsSection'>
+        { isSubmit && <Docs userCity={city} allDocs={availableDoctors}/> }
+      </div>  
     </div>
   );
 }

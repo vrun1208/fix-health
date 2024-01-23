@@ -14,7 +14,7 @@ const Docs = ({ userCity, allDocs }) => {
     //console.log(cityData);
 
   return (
-    <div id='docsScroll'>
+    <div>
         {cityData.length > 0 ? (
         <div>
           <h2 className="text-2xl font-extrabold mb-2 mt-16">Physiotherapists near, {userCity}</h2>
