@@ -3,21 +3,28 @@ import Docs from './doctors';
 import { useNavigate, useLocation } from 'react-router-dom'
 
 const BookingForm = () => {
-  const [formData, setFormData] = useState({
-    name: '',
-    contact: '',
-    city: '',
-    company: '',
-    cc: '',
-  });
+  const initialData = JSON.parse(localStorage.getItem('formData')) || {
+    name: "",
+    contact: "",
+    city: "",
+    age:"",
+    company: "",
+    cc: "",
+  }
+
+  const [formData, setFormData] = useState(initialData);
 
   const [city, setCity] = useState('');
   const [availableDoctors, setAvailableDoctors] = useState([]);
-  const [age, setAge] = useState('');
+  //const [age, setAge] = useState('');
   const [isSubmit, isSetSubmit] = useState(false);
 
   const history = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    localStorage.setItem('formData', JSON.stringify(formData));
+  }, [formData]);
 
 
   // Fetch available doctors from JSON
@@ -25,7 +32,6 @@ const BookingForm = () => {
     let response = await fetch('mock.json');
     let data = await response.json();
     setAvailableDoctors(data);
-    //console.log(data);
   }
 
   useEffect(() => {
@@ -41,6 +47,10 @@ const BookingForm = () => {
     if (urlCity) {
       // If city param is present in the URL -> update the formData
       setCity(urlCity);
+      setFormData(prev => ({
+        ...prev,
+        city: urlCity,
+      }))
       isSetSubmit(true);
       window.scrollTo({ top: document.getElementById('docsSection').offsetTop, behavior: 'smooth' });
     }
@@ -54,21 +64,30 @@ const BookingForm = () => {
       // If manually reloaded, redirect to the default path
       history('');
       isSetSubmit(false);
+      setFormData({
+        name: "",
+        contact: "",
+        city: "",
+        age:"",
+        company: "",
+        cc: "",
+      })
+      localStorage.removeItem('formData');
       window.scrollTo({ top: 0 , behavior: 'smooth' });
     }
   }, [history]);
 
 
   //update and handle age param
-  const handleAge=(event) => {
-    setAge(event.target.value);
-  }
+  // const handleAge=(event) => {
+  //   setAge(event.target.value);
+  // }
  
 
   // Handle form submission
   const handleSubmit = (e) => {
     e.preventDefault();
-    setAge('');
+    //setAge(age);
     setCity(formData.city);
 
     //setting url path as per the city/location by user input
@@ -77,26 +96,21 @@ const BookingForm = () => {
     }
 
     isSetSubmit(true);
-    setFormData({
-      name: '',
-      contact: '',
-      city: '',
-      company: '',
-      cc: '',
-    });
   };
 
   //reset form data
   const handleReset=() => {
     isSetSubmit(false);
-    setAge('');
+    //setAge('');
     setFormData({
-      name: '',
-      contact: '',
-      city: '',
-      company: '',
-      cc: '',
-    });
+      name: "",
+      contact: "",
+      city: "",
+      age:"",
+      company: "",
+      cc: "",
+    })
+    localStorage.removeItem('formData');
     setCity('');
     history('');
   }
@@ -107,7 +121,7 @@ const BookingForm = () => {
         <div className='grid md:grid-cols-2'>
           <div className='mb-5'>
             <label htmlFor="text" className='block mb-2 text-sm font-medium'>Name</label>
-            <input type="text"  value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className='bg-gray-700 border-dashed border-2 border-gray-500 mr-4 rounded-lg p-2 md:w-44 w-full'  />
+            <input type="text" value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className='bg-gray-700 border-dashed border-2 border-gray-500 mr-4 rounded-lg p-2 md:w-44 w-full'  />
           </div>
           <div className='mb-5'>
             <label htmlFor="text" className='block mb-2 text-sm font-medium'>Contact</label>
@@ -117,7 +131,7 @@ const BookingForm = () => {
         <div className='grid md:grid-cols-3'>
         <div className='mb-5'>
             <label htmlFor="text" className='block mb-2 text-sm font-medium'>Age</label>
-            <input type="text" value={age} className='bg-gray-700 border-dashed border-2 border-gray-500 rounded-lg p-2 md:w-20 w-full' onChange={handleAge} />
+            <input type="text" value={formData.age} onChange={(e) => setFormData({...formData, age: e.target.value})} className='bg-gray-700 border-dashed border-2 border-gray-500 rounded-lg p-2 md:w-20 w-full' />
           </div>
           <div className='mb-5'>
             <label htmlFor="text" className='block mb-2 text-sm font-medium'>City</label>
@@ -143,10 +157,10 @@ const BookingForm = () => {
           <label className="flex items-center">
             <input
               type="checkbox"
-              disabled={age < 40 || age===''}
+              disabled={formData.age < 40 || formData.age===''}
               className="form-checkbox h-4 w-4 text-blue-500"
             />
-            <span className={`ml-2 ${parseInt(age) < 40 || age ==='' ? 'text-gray-600' : 'text-white'}`}>Previous experience with physiotherapy</span>
+            <span className={`ml-2 ${parseInt(formData.age) < 40 || formData.age ==='' ? 'text-gray-600' : 'text-white'}`}>Previous experience with physiotherapy</span>
           </label>
         </div>
         <div className='flex flex-row items-center justify-evenly'>
